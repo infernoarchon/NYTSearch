@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>New York Times Search</title>
+  <!--bootstrap-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+  
+
+  
+</head>
+<body>
+<!-- Search Row-->
+<div class='row'>
+<div class='col-sm-12'></div>  
+  <!--Bootstrap Search-->
+  <div class= "container"></div>
+<!--Jumbotron title -->
+<div class='Jumbotron col-12' style="background-color:navy; color: white;">
+<h1 class="text-center">
+    <strong>
+      <i class="fa fa-newspaper-o" aria-hidden="true"></i>New York Times Search</strong>
+        
+    </h1>
+  </div>
+  
+<!--Searchrow-->
+<div class="row col-12">
+    <div class="col-sm-12">
+      <br>
+      <!-- search parameters -->
+      <div class="card">
+        <div class="card-header">
+          <strong>
+            <i class="fa fa-search" aria-hidden="true"></i>Search Parameters</strong>
+            
+        </div>
+        <div class="card-body">
+  <!--Creating input-->
+<div clas=‘form’></div>
+<div class=“form-group”>
+   <label for=“search”>Search Term:</label>
+   <input type=“text” class=“form-search” id="searchTerm">
+</div>
+  
+<!-- record retrieval-->
+<div class='retrieval-form'>
+  <label for="nytform">Number of Records of Retrieve:</label>
+  <select id="number-of-articles" class='selectArticle'>
+   <option value='5'selected>5</option>
+  </select>
+</div>
+<div clas=‘form’></div>
+<div class=“form-group”>
+   <label for=“Start-Year”>Start Year:</label>
+   <input type=“text” class=“startYear” id="start-year">
+</div>  
+<div clas=‘form’></div>
+<div class=“form-group”>
+   <label for=“End-Year”>End Year:</label>
+   <input type=“text” class=“endYear” id="end-year">
+</div>  
+
+
+
+
+
+
+  <!-- <div id="buttons">
+    <button data-person="">
+      I'll be back
+    </button>
+    <button data-person="">
+      My happiness grows in direct proportion to my acceptance,
+      and in inverse proportion to my expectations.
+    </button> -->
+
+    <!-- STEP ONE: Open this file in the browser and click on the buttons. Watch what happens -->
+
+    <!-- STEP TWO: between the dashed lines below
+            * add three more buttons
+            * add a data-person attribute of famous people you know
+            * with a quote said by them -->
+
+    <!-- **************************************** -->
+    <button class="search-button">
+      Search
+    </button>
+    
+    <!-- STEP FOUR: go over the JavaScript with your partners, and explain the lines of code to each other. -->
+
+  </div>
+
+<!-- NY TIMES API webpage documentation: 
+      https://developer.nytimes.com/ 
+-->
+<div class="articles-appear-here"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+
+    $(".search-button").on("click", function(event) {
+      var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+      event.preventDefault();
+      var searchterm = $("#searchTerm").val().trim();
+      // var recordnum = $("#number-of-record").val().trim();
+      var startyear = $("#start-year").val().trim();
+      var endyear = $("#end-year").val().trim();
+      if(!startyear) {
+        startyear = 1600
+      }
+      if(!endyear) {
+        endyear = 2018
+      }
+
+      url += '?' + $.param({
+            'api-key': "9fc8aa8665d24aee92ebcfba3a0e7cdb",
+            'q': searchterm,
+            'begin_date' : startyear + "0101",
+            'end_date' : endyear + "1231",                                
+          });
+          $.ajax({
+            url: url,
+            method: 'GET',
+          }) .then(function(response) {
+          var results = response.response.docs;
+          console.log(results)
+          for (var i = 0; i < 5; i++) {
+            var articleDiv = $("<div>");
+
+            var headline = results[i].headline.main;
+            var p = $("<p>").text(headline);
+            articleDiv.prepend(p);
+            $(".articles-appear-here").prepend(articleDiv);
+          }
+        });
+    });
+      
+/*//  FROM JONATHAN
+  //  REFERENCE CODE - SAVE AND REUSE
+   
+    $('nav a').on('click', function(e) {
+      e.preventDefault();
+      var url = this.href;                                      // URL to load
+
+      var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+      
+      var $content = $('#content');                             // Cache selection
+
+      $('nav a.current').removeClass('current');                // Update links
+      $(this).addClass('current');
+      $('#container').remove();                                 // Remove content
+
+      $.ajax({
+        type: "GET",                                            // GET or POST
+        url: url,                                               // Path to file
+        timeout: 2000,                                          // Waiting time
+        beforeSend: function() {                                // Before Ajax 
+          $content.append('<div id="load">Loading</div>');      // Load message
+        },
+        complete: function() {                                  // Once finished
+          $('#load').remove();                                  // Clear message
+        },
+        success: function(data) {                               // Show content
+          $content.html( $(data).find('#container') ).hide().fadeIn(400);
+        },
+        error: function() {                                     // Show error msg 
+          $content.html('<div id="container">Please try again soon.</div>');
+        }
+      });
+    });
+*/
+
+/* -- BOOTSTRAP FORM INPUT TEMPLATE
+<form>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Search Term</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput2">Number of records to retrive</label>
+            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput2">Start Year (Optional)</label>
+            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput2">End Year (Optional)</label>
+            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+        </div>
+</form> 
+
+*/
+
+  </script>
+</body>
+
+</html>
+
+
+
+  </script>
+</body>
+
+</html>
+
+
+
+  </script>
+</body>
+
+</html>
+
+
+
+  </script>
+</body>
+
+</html>
+
+
+
+  </script>
+</body>
+
+</html>
+
+
+
+  </script>
+</body>
+
+</html>
+
+
+
+  </script>
+</body>
+
+</html>
+
+
+
